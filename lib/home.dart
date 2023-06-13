@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:health/health.dart';
 
@@ -11,32 +13,32 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  HealthFactory health = HealthFactory();
   int steps = 0;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     InitialData();
+    // Timer.periodic(new Duration(seconds: 1), (timer) async {
+    // });
   }
 
   void InitialData() async {
-    var types = [HealthDataType.STEPS];
-    var now = DateTime.now();
-    var midnight = DateTime(now.year, now.month, now.day);
-    var permissions = [HealthDataAccess.READ];
+    HealthFactory health = HealthFactory();
+    List<HealthDataType> types = [HealthDataType.STEPS];
+    DateTime midnight = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    List<HealthDataAccess> permissions = [HealthDataAccess.READ];
     bool requested = await health.requestAuthorization(types);
 
     if (requested) {
       try {
-        types = [HealthDataType.STEPS];
         await health.requestAuthorization(types, permissions: permissions);
-        print('Work try');
-        steps = await health.getTotalStepsInInterval(midnight, now) ?? 0;
-
-        print('steps ::: $steps');
+        Future.delayed(Duration(seconds: 2)).then((value) {
+          InitialData();
+        });
+        steps = await health.getTotalStepsInInterval(midnight, DateTime.now()) ?? 0;
+        setStates();
       } catch (err) {
-        print('Work catch');
         print('Caught exception in getTotalStepsInInterval: $err');
       }
     }
@@ -49,6 +51,10 @@ class _HomeScreenState extends State<HomeScreen> {
     // // write steps and blood glucose
     // bool success = await health.writeHealthData(10, HealthDataType.STEPS, now, now);
     // success = await health.writeHealthData(3.1, HealthDataType.BLOOD_GLUCOSE, now, now);
+  }
+
+  void setStates() {
+    if (mounted) setState(() {});
   }
 
   @override
