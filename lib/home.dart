@@ -16,14 +16,11 @@ class _HomeScreenState extends State<HomeScreen> {
   int steps = 0;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    InitialData();
-    // Timer.periodic(new Duration(seconds: 1), (timer) async {
-    // });
+    initialData();
   }
 
-  void InitialData() async {
+  void initialData() async {
     HealthFactory health = HealthFactory();
     List<HealthDataType> types = [HealthDataType.STEPS];
     DateTime midnight = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
@@ -33,8 +30,8 @@ class _HomeScreenState extends State<HomeScreen> {
     if (requested) {
       try {
         await health.requestAuthorization(types, permissions: permissions);
-        Future.delayed(Duration(seconds: 2)).then((value) {
-          InitialData();
+        await Future.delayed(const Duration(seconds: 2)).then((value) {
+          initialData();
         });
         steps = await health.getTotalStepsInInterval(midnight, DateTime.now()) ?? 0;
         setStates();
@@ -62,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Text('Total step is $steps'),
+        child: Center(child: Text('Total step is $steps')),
       ),
     );
   }
