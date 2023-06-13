@@ -29,8 +29,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (requested) {
       try {
+        types = [HealthDataType.STEPS];
+        await health.requestAuthorization(types, permissions: permissions);
+        print('Work try');
         steps = await health.getTotalStepsInInterval(midnight, now) ?? 0;
+
+        print('steps ::: $steps');
       } catch (err) {
+        print('Work catch');
         print('Caught exception in getTotalStepsInInterval: $err');
       }
     }
@@ -39,8 +45,6 @@ class _HomeScreenState extends State<HomeScreen> {
     // List<HealthDataPoint> healthData = await health.getHealthDataFromTypes(now.subtract(const Duration(days: 1)), now, types);
 
     // // request permissions to write steps and blood glucose
-    // types = [HealthDataType.STEPS, HealthDataType.BLOOD_GLUCOSE];
-    // await health.requestAuthorization(types, permissions: permissions);
 
     // // write steps and blood glucose
     // bool success = await health.writeHealthData(10, HealthDataType.STEPS, now, now);
